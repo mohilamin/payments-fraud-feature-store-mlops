@@ -9,7 +9,11 @@ DESCRIPTIONS = {
     "MULTIPLE_FAILED_AUTHS": "Multiple failed authorizations in the recent window.",
     "NIGHT_TRANSACTION_BURST": "Transaction occurred during night-risk hours.",
     "DEVICE_LINKED_TO_MULTIPLE_CUSTOMERS": "Device is linked to multiple recent customers.",
+    "CARD_NOT_PRESENT_RISK": "Card-not-present transaction has elevated synthetic risk.",
+    "IMPOSSIBLE_TRAVEL": "Recent customer activity suggests impossible travel risk.",
 }
+
+ALL_REASON_CODES = sorted(DESCRIPTIONS)
 
 
 def risk_band(probability: float) -> str:
@@ -52,6 +56,10 @@ def generate_reason_codes(row: dict[str, object]) -> list[str]:
         codes.append("NIGHT_TRANSACTION_BURST")
     if float(row.get("device_distinct_customers_24h", 0)) >= 2:
         codes.append("DEVICE_LINKED_TO_MULTIPLE_CUSTOMERS")
+    if int(row.get("card_not_present_flag", 0)) == 1 and float(row.get("fraud_probability", 0)) >= 0.30:
+        codes.append("CARD_NOT_PRESENT_RISK")
+    if int(row.get("impossible_travel_flag", 0)) == 1:
+        codes.append("IMPOSSIBLE_TRAVEL")
     return codes[:3] or ["LOW_RISK_BASELINE"]
 
 

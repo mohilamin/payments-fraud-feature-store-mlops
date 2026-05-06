@@ -27,6 +27,12 @@ def main() -> None:
     model = read_json(scorecard_path / "fraud_model_scorecard.json")
     feature_quality = read_json(scorecard_path / "feature_store_quality_report.json")
     scoring_quality = read_json(scorecard_path / "scoring_quality_report.json")
+    pattern_report = read_json(scorecard_path / "fraud_pattern_detection_report.json")
+    dq_report = read_json(scorecard_path / "data_quality_detection_report.json")
+    pit_report = read_json(scorecard_path / "point_in_time_feature_validation.json")
+    reason_report = read_json(scorecard_path / "reason_code_report.json")
+    alert_quality = read_json(scorecard_path / "alert_queue_quality_report.json")
+    monitoring_scorecard = read_json(scorecard_path / "model_monitoring_scorecard.json")
     drift = read_json(get_path("monitoring") / "feature_drift_summary.json")
     alerts = read_csv(get_path("alerts") / "fraud_alert_queue.csv")
     issues = read_csv(get_path("processed") / "data_quality_issues.csv")
@@ -36,14 +42,37 @@ def main() -> None:
     c1, c2, c3, c4 = st.columns(4)
     c1.metric("Precision", model.get("precision", "Run pipeline"))
     c2.metric("Recall", model.get("recall", "Run pipeline"))
-    c3.metric("Alerts", scoring_quality.get("alert_count", len(alerts)))
-    c4.metric("Max PSI", drift.get("max_psi", "Run pipeline"))
+    c3.metric("Alerts", alert_quality.get("total_alerts", scoring_quality.get("alert_count", len(alerts))))
+    c4.metric("Feature Quality", feature_quality.get("overall_feature_store_quality_score", "Run pipeline"))
 
     st.header("Fraud Model Performance")
     st.json(model)
 
     st.header("Feature Store Overview")
     st.json(feature_quality)
+
+    st.header("Fraud Pattern Detection")
+    st.json(
+        {
+            "detection_rate": pattern_report.get("detection_rate"),
+            "detected_patterns": pattern_report.get("detected_patterns"),
+            "missed_patterns": pattern_report.get("missed_patterns"),
+        }
+    )
+    st.dataframe(read_csv(scorecard_path / "fraud_pattern_detection_report.csv"), use_container_width=True)
+
+    st.header("Data Quality Detection")
+    st.json(
+        {
+            "detection_rate": dq_report.get("detection_rate"),
+            "false_positive_count": dq_report.get("false_positive_count"),
+        }
+    )
+    st.dataframe(read_csv(scorecard_path / "data_quality_detection_report.csv"), use_container_width=True)
+
+    st.header("Point-in-Time Validation")
+    st.json({"pass_rate": pit_report.get("pass_rate"), "passed_checks": pit_report.get("passed_checks")})
+    st.dataframe(read_csv(scorecard_path / "point_in_time_feature_validation.csv"), use_container_width=True)
 
     st.header("Fraud Alerts")
     st.dataframe(alerts.head(200), use_container_width=True)
@@ -56,11 +85,20 @@ def main() -> None:
         st.json(score_transaction(payload))
 
     st.header("Reason Code Explorer")
+    st.json(
+        {
+            "coverage_rate": reason_report.get("reason_code_coverage_rate"),
+            "top_reason_codes": reason_report.get("top_reason_codes"),
+        }
+    )
     if not scored.empty:
         st.dataframe(scored[["transaction_id", "risk_band", "top_reason_codes", "recommended_action"]].head(100), use_container_width=True)
 
+    st.header("Alert Queue Quality")
+    st.json(alert_quality)
+
     st.header("Drift Monitoring")
-    st.json(drift)
+    st.json({"drift": drift, "monitoring_scorecard": monitoring_scorecard})
     st.dataframe(read_csv(get_path("monitoring") / "feature_drift_report.csv"), use_container_width=True)
 
     st.header("Data Quality Issues")

@@ -4,6 +4,7 @@ from src.common.config import get_path
 from src.common.logging import get_logger
 from src.common.paths import ensure_directory
 from src.data_generation.generate_synthetic_payments import generate_synthetic_payments
+from src.evidence.reports import generate_evidence_reports
 from src.features.build_features import build_transaction_features
 from src.ingestion.loaders import load_raw_data
 from src.ingestion.validators import validate_required_columns
@@ -30,6 +31,7 @@ def run_pipeline() -> None:
     train_model(features)
     scored = score_batch(features)
     run_monitoring(features, scored)
+    generate_evidence_reports(frames, issues, features, scored)
     LOGGER.info("pipeline complete")
 
 

@@ -47,6 +47,24 @@ def test_data_quality_validation() -> None:
     )
 
 
+def test_closed_account_transaction_detection() -> None:
+    generate_synthetic_payments()
+    issues = detect_quality_issues(load_raw_data())
+    assert "closed_account_transactions" in set(issues["issue_type"])
+
+
+def test_future_timestamp_detection() -> None:
+    generate_synthetic_payments()
+    issues = detect_quality_issues(load_raw_data())
+    assert "future_transaction_timestamp" in set(issues["issue_type"])
+
+
+def test_invalid_currency_detection() -> None:
+    generate_synthetic_payments()
+    issues = detect_quality_issues(load_raw_data())
+    assert "invalid_currency" in set(issues["issue_type"])
+
+
 def test_quarantine_output(pipeline_outputs: None) -> None:
     assert (get_path("processed") / "quarantine" / "payment_transactions_quarantine.csv").exists()
 

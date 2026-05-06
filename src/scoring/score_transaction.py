@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import UTC, datetime
+
 import joblib
 import pandas as pd
 
@@ -35,5 +37,7 @@ def score_transaction(transaction: dict[str, object]) -> dict[str, object]:
         "top_reason_codes": codes,
         "reason_code_descriptions": descriptions(codes),
         "recommended_action": recommended_action(band),
+        "model_version": "v0.2.0",
+        "scoring_timestamp": datetime.now(UTC).isoformat(),
         "feature_count": len(feature_columns()),
     }

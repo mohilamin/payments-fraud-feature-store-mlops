@@ -188,12 +188,12 @@ def _inject_fraud_patterns(
         "new_device_high_value_purchase",
         "merchant_risk_spike",
         "international_transaction_mismatch",
-        "repeated_declines_followed_by_approval",
+        "repeated_declines_then_approval",
         "account_takeover_pattern",
         "unusual_merchant_category",
         "amount_outlier",
         "night_time_transaction_burst",
-        "card_not_present_fraud_pattern",
+        "card_not_present_fraud",
         "synthetic_chargeback_pattern",
     ]
     for index, pattern in enumerate(pattern_names):
@@ -236,8 +236,13 @@ def _inject_fraud_patterns(
         manifest["patterns"].append(
             {
                 "pattern_type": pattern,
-                "transaction_ids": frame.loc[rows, "transaction_id"].head(25).tolist(),
+                "transaction_ids": frame.loc[rows, "transaction_id"].tolist(),
                 "expected_fraud_count": int(len(rows)),
+                "metadata": {
+                    "synthetic_only": True,
+                    "injection_batch": index + 1,
+                    "primary_signal": pattern,
+                },
             }
         )
     return frame.sort_values("transaction_timestamp").reset_index(drop=True), manifest
@@ -284,7 +289,7 @@ def _inject_quality_issues(
     frame.loc[rows, "account_id"] = closed_accounts.to_numpy()
     manifest["issues"].append(
         {
-            "issue_type": "transactions_linked_to_closed_accounts",
+            "issue_type": "closed_account_transactions",
             "transaction_ids": frame.loc[rows, "transaction_id"].tolist(),
             "expected_count": int(len(rows)),
         }

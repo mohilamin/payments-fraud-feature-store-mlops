@@ -41,7 +41,7 @@ def detect_quality_issues(frames: dict[str, pd.DataFrame]) -> pd.DataFrame:
     add(txns["fraud_label"].astype(str).eq(""), "fraud_label", "missing_fraud_label", "critical", "exclude_from_training")
     add(~txns["customer_country"].astype(str).isin(VALID_COUNTRIES), "customer_country", "inconsistent_country_codes", "medium", "standardize_country_code")
     closed = txns["account_id"].map(accounts).eq("closed")
-    add(closed, "account_id", "transactions_linked_to_closed_accounts", "critical", "quarantine_record")
+    add(closed, "account_id", "closed_account_transactions", "critical", "quarantine_record")
     return pd.DataFrame(issues)
 
 

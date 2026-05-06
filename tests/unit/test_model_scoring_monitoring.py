@@ -48,6 +48,14 @@ def test_psi_calculation() -> None:
     assert psi >= 0
 
 
+def test_psi_empty_series_edge_case() -> None:
+    assert population_stability_index(pd.Series([], dtype=float), pd.Series([1, 2, 3])) == 0.0
+
+
+def test_psi_constant_series_edge_case() -> None:
+    assert population_stability_index(pd.Series([1, 1, 1]), pd.Series([1, 1, 1])) == 0.0
+
+
 def test_drift_report_creation(pipeline_outputs: None) -> None:
     assert (get_path("monitoring") / "feature_drift_report.csv").exists()
 

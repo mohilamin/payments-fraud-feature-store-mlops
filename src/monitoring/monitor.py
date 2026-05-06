@@ -22,7 +22,16 @@ def run_monitoring(features: pd.DataFrame | None = None, scored: pd.DataFrame | 
         "feature_count": int(len(drift)),
         "max_psi": float(drift["population_stability_index"].max()),
         "drifted_feature_count": int((drift["population_stability_index"] >= 0.10).sum()),
+        "high_drift_features": drift.loc[drift["population_stability_index"].ge(0.25), "feature_name"].tolist(),
+        "medium_drift_features": drift.loc[
+            drift["population_stability_index"].ge(0.10)
+            & drift["population_stability_index"].lt(0.25),
+            "feature_name",
+        ].tolist(),
     }
+    summary["overall_drift_status"] = (
+        "high" if summary["high_drift_features"] else "medium" if summary["medium_drift_features"] else "low"
+    )
     (output / "feature_drift_summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     distribution = scored["risk_band"].value_counts(normalize=True).rename_axis("risk_band").reset_index(name="share")
     distribution.to_csv(output / "scoring_distribution_report.csv", index=False)
