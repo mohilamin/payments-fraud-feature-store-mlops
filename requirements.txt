@@ -1,0 +1,14 @@
+pandas
+numpy
+scikit-learn
+duckdb
+joblib
+pydantic
+pyyaml
+fastapi
+httpx
+uvicorn
+streamlit
+pytest
+ruff
+python-dotenv

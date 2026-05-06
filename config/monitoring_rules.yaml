@@ -1,0 +1,7 @@
+psi:
+  warning: 0.10
+  critical: 0.25
+missing_rate:
+  warning: 0.05
+score_distribution:
+  high_risk_rate_warning: 0.20

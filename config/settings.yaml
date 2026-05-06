@@ -1,0 +1,24 @@
+project_name: Payments Fraud Feature Store + MLOps Pipeline
+random_seed: 42
+paths:
+  raw: data/raw
+  processed: data/processed
+  features: data/features
+  training: data/training
+  scoring: data/scoring
+  alerts: data/alerts
+  monitoring: data/monitoring
+  scorecards: data/scorecards
+  model_artifacts: models/artifacts
+  model_registry: models/registry
+training:
+  test_size: 0.25
+  split_timestamp: "2025-03-15T00:00:00"
+scoring:
+  threshold: 0.50
+  high_risk_threshold: 0.70
+  alert_threshold: 0.60
+monitoring:
+  psi_warning: 0.10
+  psi_critical: 0.25
+  missing_rate_threshold: 0.05

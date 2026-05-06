@@ -1,0 +1,32 @@
+model_type: RandomForestClassifier
+label_column: fraud_label
+thresholds:
+  prediction: 0.50
+  medium: 0.30
+  high: 0.60
+  critical: 0.85
+feature_columns:
+  - customer_txn_count_1h
+  - customer_txn_count_24h
+  - customer_total_amount_24h
+  - customer_avg_amount_30d
+  - customer_failed_auth_count_24h
+  - customer_distinct_merchants_24h
+  - customer_distinct_countries_24h
+  - merchant_txn_count_24h
+  - merchant_fraud_rate_30d
+  - merchant_avg_amount_30d
+  - merchant_chargeback_rate_30d
+  - merchant_risk_score
+  - device_txn_count_24h
+  - device_distinct_customers_24h
+  - device_age_days
+  - device_risk_score
+  - new_device_flag
+  - amount_zscore_customer
+  - international_mismatch_flag
+  - card_not_present_flag
+  - impossible_travel_flag
+  - night_transaction_flag
+  - high_velocity_flag
+  - risky_merchant_category_flag

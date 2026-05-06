@@ -1,0 +1,12 @@
+payment_transactions:
+  required_columns:
+    - transaction_id
+    - customer_id
+    - account_id
+    - merchant_id
+    - device_id
+    - transaction_timestamp
+    - amount
+    - currency
+    - fraud_label
+  valid_currencies: ["USD", "CAD", "EUR", "GBP", "MXN"]

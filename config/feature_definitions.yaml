@@ -1,0 +1,25 @@
+features:
+  customer_txn_count_1h: Transactions by customer in prior hour.
+  customer_txn_count_24h: Transactions by customer in prior 24 hours.
+  customer_total_amount_24h: Prior 24-hour customer spend.
+  customer_avg_amount_30d: Prior 30-day customer average amount.
+  customer_failed_auth_count_24h: Failed auths in prior 24 hours.
+  customer_distinct_merchants_24h: Distinct merchants in prior 24 hours.
+  customer_distinct_countries_24h: Distinct merchant countries in prior 24 hours.
+  merchant_txn_count_24h: Merchant volume in prior 24 hours.
+  merchant_fraud_rate_30d: Prior 30-day merchant fraud rate.
+  merchant_avg_amount_30d: Prior 30-day merchant average amount.
+  merchant_chargeback_rate_30d: Prior 30-day merchant chargeback rate.
+  merchant_risk_score: Synthetic merchant risk profile score.
+  device_txn_count_24h: Device volume in prior 24 hours.
+  device_distinct_customers_24h: Distinct customers by device in prior 24 hours.
+  device_age_days: Days since first known device activity.
+  device_risk_score: Synthetic device risk profile score.
+  new_device_flag: Whether the device is new for the customer.
+  amount_zscore_customer: Customer-relative transaction amount z-score.
+  international_mismatch_flag: Country mismatch indicator.
+  card_not_present_flag: Card-not-present transaction indicator.
+  impossible_travel_flag: Synthetic impossible travel flag.
+  night_transaction_flag: Local night-hour transaction indicator.
+  high_velocity_flag: Customer velocity risk indicator.
+  risky_merchant_category_flag: Risky merchant category indicator.
