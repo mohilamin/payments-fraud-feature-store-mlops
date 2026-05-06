@@ -11,7 +11,7 @@ def build_customer_features(transactions: pd.DataFrame) -> pd.DataFrame:
     frame["customer_txn_count_1h"] = prior_window_count(frame, "customer_id", "1h")
     frame["customer_txn_count_24h"] = prior_window_count(frame, "customer_id", "24h")
     frame["customer_total_amount_24h"] = prior_window_sum(frame, "customer_id", "amount", "24h")
-    frame["customer_avg_amount_30d"] = _prior_mean(frame, "customer_id", "amount", "30d")
+    frame["customer_avg_amount_30d"] = _prior_mean(frame, "customer_id", "amount", "30D")
     frame["customer_failed_auth_count_24h"] = _prior_failed_auth(frame)
     frame["customer_distinct_merchants_24h"] = _prior_nunique(frame, "customer_id", "merchant_id", "24h")
     frame["customer_distinct_countries_24h"] = _prior_nunique(frame, "customer_id", "merchant_country", "24h")
@@ -31,7 +31,7 @@ def build_customer_features(transactions: pd.DataFrame) -> pd.DataFrame:
 
 def _prior_mean(frame: pd.DataFrame, entity: str, value: str, window: str) -> pd.Series:
     sums = prior_window_sum(frame, entity, value, window)
-    counts = prior_window_count(frame, entity, window).replace(0, pd.NA)
+    counts = prior_window_count(frame, entity, window).mask(lambda series: series == 0)
     return (sums / counts).fillna(frame[value].median())
 
 

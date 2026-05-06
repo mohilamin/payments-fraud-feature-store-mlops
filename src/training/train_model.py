@@ -61,7 +61,7 @@ def train_model(features: pd.DataFrame | None = None) -> dict[str, object]:
                 for name, value in importances
             ],
             "model_artifact_path": str(get_path("model_artifacts") / "fraud_model.joblib"),
-            "training_timestamp": pd.Timestamp.utcnow().isoformat(),
+            "training_timestamp": pd.Timestamp.now("UTC").isoformat(),
             "evaluation_interpretation": {
                 "precision": "Precision estimates how many flagged transactions are truly fraud, which affects investigator workload and customer friction.",
                 "recall": "Recall estimates how much known fraud is captured by the model.",

@@ -166,8 +166,8 @@ def write_point_in_time_validation(features: pd.DataFrame, scorecards: Path) -> 
         ("customer_txn_count_1h", "customer_id", "1h"),
         ("customer_txn_count_24h", "customer_id", "24h"),
         ("customer_total_amount_24h", "customer_id", "24h"),
-        ("customer_avg_amount_30d", "customer_id", "30d"),
-        ("merchant_fraud_rate_30d", "merchant_id", "30d"),
+        ("customer_avg_amount_30d", "customer_id", "30D"),
+        ("merchant_fraud_rate_30d", "merchant_id", "30D"),
         ("device_txn_count_24h", "device_id", "24h"),
         ("impossible_travel_flag", "customer_id", "1h"),
     ]
