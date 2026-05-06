@@ -6,9 +6,23 @@ Status: DRAFT
 
 I built a Payments Fraud Feature Store + MLOps Pipeline as a portfolio project.
 
-This is not a notebook-only fraud model. It includes synthetic payment data, data quality checks, point-in-time features, a DuckDB offline feature store, fraud model scorecard, model registry, batch/API scoring, reason codes, drift monitoring, alert queue, FastAPI, Streamlit, Docker, CI, and 61 passing tests.
+This is not a notebook-only fraud model. It shows the production workflow around fraud ML:
 
-The project is designed to show the production workflow around fraud ML: trusted features, explainable scores, monitoring evidence, and investigator-ready outputs.
+- synthetic payment transactions
+- injected fraud patterns and data quality issues
+- point-in-time feature engineering
+- DuckDB offline feature store
+- fraud model scorecard
+- model registry and model card
+- batch/API scoring
+- deterministic reason codes
+- fraud alert queue
+- drift monitoring
+- FastAPI and Streamlit
+- 61 tests passing
+- ruff passing with no pytest warning summary
+
+The goal is to show how payment fraud scoring can be made more reproducible, explainable, and reviewable for data engineering and MLOps teams.
 
 GitHub: [link placeholder]
 
@@ -20,20 +34,30 @@ Status: DRAFT
 
 I built a local Payments Fraud Feature Store + MLOps Pipeline to demonstrate production-style fraud scoring foundations.
 
-What it includes:
+The project goes beyond model training. It includes:
 
-- Synthetic payment events and fraud pattern injection
-- Data quality manifests and detection evidence
-- Point-in-time customer, merchant, device, velocity, and transaction features
+- deterministic synthetic payment data generation
+- fraud pattern and data quality manifests
+- validation and quarantine outputs
+- point-in-time customer, merchant, device, velocity, and transaction features
 - DuckDB offline feature store
-- RandomForest fraud model with scorecard and registry artifact
-- Deterministic reason codes for explainability
-- Batch and API scoring
-- Fraud alert queue
-- Feature drift, score drift, and monitoring scorecards
-- FastAPI, Streamlit, pytest, Ruff, Docker, GitHub Actions
+- RandomForest fraud baseline with model scorecard
+- model registry metadata and model card
+- batch scoring and FastAPI scoring
+- reason codes and recommended actions
+- alert queue quality reporting
+- PSI, mean shift, missing-rate change, score drift, and monitoring scorecards
+- Streamlit dashboard
+- Docker, GitHub Actions, pytest, and ruff
 
-V0.2 adds evidence reports for fraud pattern detection, point-in-time validation, reason-code coverage, alert queue quality, and model monitoring.
+Current validation:
+
+- 61 tests passing
+- ruff passing
+- pipeline passing
+- no pytest warning summary
+
+This is meant as a portfolio project for Data Engineering, MLOps, AI Data Engineering, Fraud Data Engineering, and Risk Analytics roles.
 
 GitHub: [link placeholder]
 

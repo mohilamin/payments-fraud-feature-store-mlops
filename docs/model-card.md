@@ -107,7 +107,7 @@ Reason codes are deterministic rule explanations mapped from engineered features
     }
   ],
   "model_artifact_path": "/Users/mohmx/portfolio-projects/payments-fraud-feature-store-mlops/models/artifacts/fraud_model.joblib",
-  "training_timestamp": "2026-05-06T16:00:33.370496+00:00",
+  "training_timestamp": "2026-05-06T20:22:50.398424+00:00",
   "evaluation_interpretation": {
     "precision": "Precision estimates how many flagged transactions are truly fraud, which affects investigator workload and customer friction.",
     "recall": "Recall estimates how much known fraud is captured by the model.",

@@ -2,87 +2,108 @@
 
 ![Python 3.12](https://img.shields.io/badge/Python-3.12-blue)
 ![Tests](https://img.shields.io/badge/tests-61%20passing-green)
-![Lint](https://img.shields.io/badge/lint-ruff-purple)
+![Ruff](https://img.shields.io/badge/lint-ruff-purple)
 ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688)
 ![Streamlit](https://img.shields.io/badge/dashboard-Streamlit-FF4B4B)
 ![Docker](https://img.shields.io/badge/Docker-ready-blue)
+![DuckDB](https://img.shields.io/badge/feature%20store-DuckDB-yellow)
 
 ## Executive Summary
 
-Banks, fintechs, payment processors, card networks, and large retailers need fraud systems that are fast, explainable, monitored, and production-ready. A notebook model is not enough. This project builds a local end-to-end fraud feature store and MLOps pipeline with synthetic payment events, quality checks, point-in-time features, model training, registry artifacts, scoring, reason codes, drift monitoring, fraud alerts, FastAPI, Streamlit, tests, CI, and Docker.
+Banks, fintechs, payment processors, card networks, and large retailers need fraud systems that are fast, explainable, monitored, and production-ready. A notebook-only fraud model is not enough: production teams also need trusted transaction data, point-in-time features, model registry artifacts, reason codes, alert queues, drift monitoring, APIs, dashboards, and repeatable validation evidence.
+
+This project builds that workflow locally with synthetic payment data. It proves the engineering system around fraud ML, not just model training.
 
 Core question:
 
 > Can this transaction be scored for fraud risk using trusted features, monitored model behavior, and explainable reason codes?
 
-## Why This Is Not a Notebook Fraud Model
+## What Was Built
 
-This project does not stop at model fitting. It shows the surrounding production workflow: transaction ingestion, known data quality issue detection, point-in-time feature validation, DuckDB offline feature storage, model registry artifacts, scorecards, reason codes, alert queues, monitoring reports, API scoring, dashboard review, and automated tests.
+- Synthetic customers, accounts, merchants, devices, transactions, chargebacks, fraud labels, and risk profiles.
+- Fraud pattern injection and data quality issue injection with deterministic manifests.
+- Data quality validation, quarantine, and detection evidence.
+- Point-in-time feature engineering for customer, merchant, device, velocity, and transaction features.
+- DuckDB offline feature store at `data/features/fraud_feature_store.duckdb`.
+- Deterministic scikit-learn RandomForest fraud model with model card and registry artifact.
+- Batch and API scoring with risk bands, reason codes, recommended actions, and alert queue.
+- Drift monitoring, model monitoring, fraud pattern evidence, feature store quality reports, and scorecards.
+- FastAPI service, Streamlit dashboard, Docker files, GitHub Actions, and 61 passing tests.
+
+## Why This Is Not A Notebook Fraud Model
+
+Most portfolio fraud projects stop after training a classifier. This project demonstrates the production lifecycle that senior data and MLOps reviewers expect to see:
+
+- Data is generated, validated, and quarantined before modeling.
+- Features are point-in-time safe so they do not leak future information.
+- Feature outputs are stored in a local offline feature store.
+- Model metrics, registry metadata, and model-card documentation are written as artifacts.
+- Scores include reason codes and recommended actions for fraud operations.
+- Monitoring reports track drift and score distribution changes.
+- API and dashboard layers make the system demo-ready.
+- Tests and ruff validation make the repo reproducible from a fresh clone.
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    A["Synthetic Payment Events"] --> B["Transaction Ingestion"]
-    B --> C["Data Quality Checks"]
-    C --> D["Point-in-Time Feature Engineering"]
+    A["Synthetic Payments"] --> B["Data Quality Validation"]
+    B --> C["Quarantine"]
+    B --> D["Point-in-Time Feature Engineering"]
     D --> E["DuckDB Offline Feature Store"]
     E --> F["Training Dataset"]
-    F --> G["Fraud Model + Registry"]
-    G --> H["Batch / API Scoring"]
-    H --> I["Reason Codes + Alert Queue"]
-    H --> J["Drift Monitoring"]
-    I --> K["Evidence Scorecards"]
-    J --> K
-    K --> L["FastAPI + Streamlit Dashboard"]
+    F --> G["Fraud Model Training"]
+    G --> H["Model Registry"]
+    H --> I["Batch/API Scoring"]
+    I --> J["Reason Codes"]
+    J --> K["Alert Queue"]
+    I --> L["Drift Monitoring"]
+    K --> M["FastAPI"]
+    L --> M
+    M --> N["Streamlit Dashboard"]
+    N --> O["Fraud / Risk / Data Consumers"]
 ```
 
-## V0.2 Evidence Outputs
+## MLOps Lifecycle Demonstrated
 
-- Fraud pattern detection: `data/scorecards/fraud_pattern_detection_report.json`
-- Data quality detection: `data/scorecards/data_quality_detection_report.json`
-- Point-in-time validation: `data/scorecards/point_in_time_feature_validation.json`
-- Feature store quality: `data/scorecards/feature_store_quality_report.json`
-- Model scorecard: `data/scorecards/fraud_model_scorecard.json`
-- Reason-code coverage: `data/scorecards/reason_code_report.json`
-- Alert queue quality: `data/scorecards/alert_queue_quality_report.json`
-- Monitoring scorecard: `data/scorecards/model_monitoring_scorecard.json`
+- Data generation: deterministic synthetic payment events, entities, labels, chargebacks, and risk profiles.
+- Validation: required fields, foreign keys, invalid values, closed-account transactions, future timestamps, and other quality checks.
+- Feature engineering: point-in-time customer, merchant, device, velocity, and transaction features.
+- Feature store: DuckDB offline table plus metadata and quality scorecards.
+- Training: deterministic RandomForest baseline from the feature store.
+- Evaluation: precision, recall, F1, ROC AUC, PR AUC, capture rates, false positive rate, and confusion matrix.
+- Registry: model version, thresholds, metrics, artifact path, limitations, intended use, and approval flag.
+- Scoring: batch scoring and single-transaction API scoring.
+- Reason codes: operational explanations such as high velocity, risky merchant, amount outlier, and international mismatch.
+- Alert queue: high and critical risk transactions prioritized for review or decline.
+- Monitoring: PSI, mean shift, missing-rate change, fraud score shift, risk-band distribution, and monitoring score.
+- Serving: FastAPI endpoints and Streamlit dashboard views for reviewers and demo users.
 
-## Feature Store
+## Evidence Generated By The Pipeline
 
-The offline feature store is stored in DuckDB at `data/features/fraud_feature_store.duckdb`. The core table is `transaction_features`, keyed by `transaction_id`. V0.2 validates that customer, merchant, and device history features use only events before the scored transaction timestamp.
+These files are created by `python -m src.pipeline.run_all` and are useful for both recruiters and senior technical reviewers:
 
-Feature groups:
+- `data/scorecards/fraud_pattern_detection_report.json` / `.csv`: compares injected fraud patterns against scored risk outcomes.
+- `data/scorecards/data_quality_detection_report.json` / `.csv`: compares injected data quality issues against detected validation issues.
+- `data/scorecards/point_in_time_feature_validation.json` / `.csv`: shows sampled features only used historical transactions.
+- `data/scorecards/feature_store_quality_report.json` / `.csv`: summarizes row count, feature count, missing rates, zero-variance checks, freshness, group scores, and overall feature store quality.
+- `data/scorecards/fraud_model_scorecard.json` / `.csv`: captures model metrics, training/test sizes, fraud rates, threshold, risk-band distribution, and feature importances.
+- `data/scorecards/reason_code_report.json` / `.csv`: measures reason-code coverage and frequency across scored transactions and alerts.
+- `data/scorecards/alert_queue_quality_report.json` / `.csv`: summarizes alert volume, risk bands, recommended actions, fraud rate in alerts, and alert queue quality.
+- `data/scorecards/model_monitoring_scorecard.json` / `.csv`: summarizes feature drift, score drift, risk-band shift, drift severity, and monitoring score.
 
-- Customer velocity and spend behavior
-- Merchant volume, fraud, chargeback, and risk profile
-- Device activity and risk profile
-- Transaction context such as international mismatch and card-not-present risk
-- Velocity flags used by reason codes and model scoring
+## Key Scorecards
 
-## MLOps Lifecycle
+The project writes business-readable scorecards that answer practical review questions:
 
-The pipeline creates a training dataset, trains a deterministic RandomForest baseline, writes a model artifact, registers model metadata, generates a model card, scores transactions, produces fraud alerts, and writes monitoring reports. The goal is not maximum fraud accuracy; the goal is to show a reproducible production-style workflow.
-
-## Model Scorecard
-
-The model scorecard includes precision, recall, F1, ROC AUC, PR AUC, confusion matrix, false positive rate, top 1/5/10 percent fraud capture rates, risk-band distribution, training/test row counts, fraud rates, threshold, and top feature importances.
-
-## Reason-Code Explainability
-
-Every scored transaction receives deterministic reason codes where applicable. V0.2 tracks reason-code coverage and frequency across alerts. Example reason codes include:
-
-- `HIGH_VELOCITY_CUSTOMER`
-- `NEW_DEVICE_HIGH_VALUE`
-- `INTERNATIONAL_MISMATCH`
-- `RISKY_MERCHANT`
-- `AMOUNT_OUTLIER`
-- `CARD_NOT_PRESENT_RISK`
-- `IMPOSSIBLE_TRAVEL`
-
-## Drift Monitoring
-
-Monitoring reports include PSI by feature, mean shift, missing-rate change, fraud score distribution shift, risk-band distribution, drift severity, and a monitoring summary score. In production, this could connect to a live model monitoring service.
+- Did the pipeline detect known synthetic fraud patterns?
+- Did data quality checks catch the injected bad records?
+- Are features point-in-time safe?
+- Is the feature store complete and fresh enough for modeling?
+- How did the model perform on synthetic fraud labels?
+- Do high-risk scores include reason codes?
+- Is the alert queue usable for fraud operations?
+- Is the scoring population drifting?
 
 ## Quickstart
 
@@ -90,8 +111,8 @@ Monitoring reports include PSI by feature, mean shift, missing-rate change, frau
 git clone https://github.com/mohilamin/payments-fraud-feature-store-mlops.git
 cd payments-fraud-feature-store-mlops
 
-python3.12 -m venv .venv
-source .venv/bin/activate
+conda create -n fraud-mlops python=3.12 -y
+conda activate fraud-mlops
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
@@ -117,10 +138,13 @@ Launch the dashboard:
 python -m streamlit run src/dashboard/app.py
 ```
 
+See [docs/fresh-clone-validation.md](docs/fresh-clone-validation.md) for a complete fresh-clone validation script.
+
 ## API Examples
 
 ```bash
 curl http://127.0.0.1:8000/fraud-summary
+curl http://127.0.0.1:8000/features
 curl http://127.0.0.1:8000/model-card
 curl http://127.0.0.1:8000/monitoring/drift
 ```
@@ -133,34 +157,47 @@ curl -X POST http://127.0.0.1:8000/score-transaction \
 
 ## Dashboard
 
-The Streamlit dashboard includes executive KPIs, fraud model scorecard, feature store quality, fraud pattern detection, data quality detection, point-in-time validation, reason-code explorer, alert queue quality, drift monitoring, transaction scoring lab, and model card.
+The Streamlit dashboard includes executive KPIs, fraud model performance, feature store quality, fraud alerts, transaction scoring lab, reason-code explorer, drift monitoring, data quality issues, model card, and investigator queue views.
 
-## Testing
+Screenshot capture guidance lives in [docs/screenshots](docs/screenshots).
 
-Current V0.2 validation: `61 passed`.
+## Testing And Validation
+
+Current validation status:
+
+- `python -m src.data_generation.generate_synthetic_payments` passed
+- `python -m src.pipeline.run_all` passed
+- `python -m pytest` passed: 61 tests
+- `python -m ruff check .` passed
+- Pytest warning summary cleaned
 
 The tests cover synthetic generation, manifests, ingestion, data quality detection, quarantine, point-in-time features, feature store creation, model training, registry, scoring, reason codes, alert queue, PSI edge cases, evidence reports, API schemas, and full pipeline execution.
 
 ## Known Limitations
 
 - Synthetic data only.
-- Deterministic baseline model, not a production fraud model.
-- Local DuckDB feature store instead of Feast, Tecton, Snowflake, or Databricks.
-- Deterministic reason codes instead of SHAP.
-- Local batch-style monitoring instead of a live monitoring service.
-- No authentication, human workflow system, or cloud deployment yet.
+- Local DuckDB feature store instead of a managed enterprise feature platform.
+- Baseline scikit-learn RandomForest model, not a production fraud model.
+- Deterministic reason codes, not SHAP or full model explainability.
+- Batch monitoring only.
+- No live Kafka stream.
+- No cloud deployment.
+- No authentication or role-based access.
+- No MLflow or Feast integration yet.
 
 ## Future Enhancements
 
-- MLflow model tracking.
-- Feast feature store.
 - Kafka or Redpanda streaming ingestion.
-- SHAP explanations.
+- Feast feature store.
+- MLflow experiment tracking and model registry.
+- SHAP reason codes.
+- Spark or Databricks scaling.
+- Snowflake warehouse version.
 - Airflow orchestration.
-- Spark, Snowflake, or Databricks scale-out version.
-- Role-based API authentication.
 - Cloud deployment.
+- Authentication and role-based access.
+- Real-time drift alerts.
 
 ## Project Status
 
-V0.2: evidence hardening for fraud pattern detection, data quality detection, point-in-time validation, model scorecards, reason codes, alert queue quality, monitoring, API, dashboard, docs, and tests.
+V0.3 Showcase Polish: public-ready README, demo guidance, screenshot capture instructions, recruiter summary, technical deep dive, fresh-clone validation, GitHub profile setup, LinkedIn drafts, release notes, and validation proof.

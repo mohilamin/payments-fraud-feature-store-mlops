@@ -1,28 +1,50 @@
 # Recruiter Summary
 
-This project shows how a fraud machine learning system works beyond a notebook.
+## Simple Explanation
 
-## Problem It Solves
+This project shows how a payment fraud detection system works beyond a machine learning notebook.
 
-Payment companies need fraud systems that can score transactions quickly, explain why a transaction is risky, monitor model behavior, and support fraud operations teams.
+Fraud teams do not only need a model. They need reliable transaction data, trustworthy features, model evidence, risk scores, explanations, monitoring, and a queue of alerts that investigators can review.
+
+## What Problem It Solves
+
+Banks, fintechs, payment processors, and retailers need to detect risky transactions while limiting customer friction. A model that works in a notebook is not enough unless the surrounding data and MLOps workflow is reliable.
 
 ## What Was Built
 
-A local end-to-end pipeline that generates synthetic payment data, detects data quality issues, builds point-in-time fraud features, stores them in DuckDB, trains a model, scores transactions, creates reason codes, produces fraud alerts, monitors drift, and exposes outputs through FastAPI and Streamlit.
+This repo builds a local end-to-end system using synthetic payment data:
+
+- Generates fake customers, accounts, merchants, devices, transactions, fraud labels, and chargebacks.
+- Injects known fraud patterns and data quality issues.
+- Validates data and writes detection evidence.
+- Builds point-in-time fraud features so the model does not use future information.
+- Stores features in DuckDB as a local offline feature store.
+- Trains a deterministic fraud model.
+- Writes model metrics, a model registry artifact, and a model card.
+- Scores transactions with risk bands, reason codes, and recommended actions.
+- Creates a fraud alert queue.
+- Produces drift monitoring and scorecard reports.
+- Exposes outputs through FastAPI and Streamlit.
+- Runs with 61 passing tests and ruff validation.
 
 ## Skills It Proves
 
-- Data engineering and pipeline design
-- Feature engineering and feature store thinking
-- MLOps artifacts such as model registry, model card, scorecards, and monitoring
+- Data engineering pipeline design
+- Feature engineering and feature store design
+- MLOps artifacts such as model cards, model registries, scorecards, and monitoring reports
+- Fraud/risk analytics workflow understanding
 - API and dashboard delivery
-- Testing, linting, Docker, and CI/CD
-- Business communication for fraud/risk workflows
+- Testing, linting, Docker, and CI/CD readiness
+- Business communication for technical projects
 
-## Relevant Roles
+## Why It Matters For Roles
 
-This maps well to Data Engineer, MLOps Engineer, AI Data Engineer, Fraud Data Engineer, Risk Analytics Engineer, and Data Platform Engineer roles.
+- Data Engineer: shows ingestion, validation, feature pipelines, DuckDB storage, and reproducibility.
+- MLOps Engineer: shows training, registry artifacts, scoring, monitoring, Docker, tests, and CI.
+- Fraud Data Engineer: shows fraud pattern injection, risk scoring, reason codes, and alert queues.
+- AI Data Engineer: shows governed feature generation and model-ready data products.
+- Risk Analytics Engineer: shows model scorecards, false positive thinking, and investigator-friendly outputs.
 
-## Why It Is Stronger Than a Basic ML Notebook
+## Why It Is Stronger Than A Basic ML Notebook
 
-It includes production-style evidence: data quality reports, point-in-time validation, fraud pattern detection, reason-code coverage, alert queue quality, model monitoring, API responses, dashboard views, and 61 passing tests.
+It includes the production evidence around the model: point-in-time validation, data quality detection reports, fraud pattern detection reports, model registry metadata, reason-code coverage, alert queue quality, drift monitoring, API schemas, dashboard views, and 61 passing tests.
